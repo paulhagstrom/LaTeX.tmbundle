@@ -1,0 +1,11 @@
+LaTeX Bundle.
+
+This is a fork of TextMate's LaTeX bundle.  I intend to produce a bundle for writing LaTeX code that is leaner than the current bundle, while making the really common tasks easy.  There should be *one* way to do things, not many.
+
+# TODO.
+
+ * Clean up the math env insertion commands.
+ * Singular reference insertion command that full-text, case-insensitively searches the bib for refs.
+ * One right way to do project-master documents. Avoid the TS-* headers.
+ * Faster document compilation; support for fmt files.
+ * Unified completion bound to “\”.
