@@ -1,0 +1,19 @@
+\documentclass{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage{ifxetex}
+
+\usepackage{tikz}
+\usetikzlibrary{3d,arrows,automata,backgrounds,calc,calendar,chains,decorations,decorations.footprints,decorations.fractals,decorations.markings,decorations.pathmorphing,decorations.pathreplacing,decorations.shapes,decorations.text,er,fit,folding,matrix,mindmap,patterns,petri,plothandlers,plotmarks,positioning,scopes,shapes.arrows,shapes.callouts,shapes,shapes.gates.logic.IEC,shapes.gates.logic.US,shapes.geometric,shapes.misc,shapes.multipart,shapes.symbols,through,topaths,trees}
+\usepackage{pgfplots,pgfplotstable}
+
+\ifxetex
+  \usepackage{fontspec} % this is only compatible with xetex
+\else
+  \usetikzlibrary{fadings,shadows} % these two are incompatible with xetex
+\fi
+
+\usepackage{hyperref}
+\pagestyle{empty}

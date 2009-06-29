@@ -5,18 +5,20 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>texMate.py sync 1</string>
+	<string>pdf=$(dirname ${TM_PROJECT_MASTER:-$TM_FILEPATH})/$(basename -s .tex ${TM_PROJECT_MASTER:-$TM_FILEPATH}).pdf
+
+/Applications/Skim.app/Contents/SharedSupport/displayline "$TM_LINE_NUMBER" "$pdf" "$TM_FILEPATH"</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
-	<string>^~@o</string>
+	<string>~@G</string>
 	<key>name</key>
-	<string>Jump to Current Line in Viewer</string>
+	<string>Jump to Corresponding Location in PDF</string>
 	<key>output</key>
-	<string>discard</string>
+	<string>showAsTooltip</string>
 	<key>scope</key>
 	<string>text.tex.latex</string>
 	<key>uuid</key>
-	<string>D8B2D295-AD3C-11D9-BD97-000D93B6E43C</string>
+	<string>7E2E41D2-2CA4-4A48-AF99-0E517E192054</string>
 </dict>
 </plist>

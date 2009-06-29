@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>contactEmailRot13</key>
@@ -14,6 +14,12 @@
 		<string>52EFF5E0-892D-4E86-88EF-BBB0F984C3BB</string>
 		<string>B585D867-EF22-4396-AD50-8742B9B8FC84</string>
 		<string>C99FA1E9-E535-4CB2-BC31-7157318B67B5</string>
+		<string>F38DDE93-BF77-449D-A4C9-6C525ECAC6FB</string>
+		<string>445F9B97-7D25-4262-A715-03F9D688856A</string>
+		<string>903B133A-B073-40C2-83DD-7B1E6D435A26</string>
+		<string>7F7578B0-58F3-44B3-9278-1CBEA9C58208</string>
+		<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
+		<string>D8B2D295-AD3C-11D9-BD97-000D93B6E43C</string>
 	</array>
 	<key>description</key>
 	<string>Support for the &lt;a href="http://www.latex-project.org/"&gt;LaTeX&lt;/a&gt; typesetting system, the de facto standard for scientific papers.</string>
@@ -246,6 +252,9 @@
 	<string>LaTeX</string>
 	<key>ordering</key>
 	<array>
+		<string>43E6240E-619A-4FC7-A256-1B885A1360D0</string>
+		<string>7E2E41D2-2CA4-4A48-AF99-0E517E192054</string>
+		<string>F330276E-C4B2-11D9-B15D-000D93B6E43C</string>
 		<string>B3E6DCF7-6323-4229-94D7-59996BDF07EC</string>
 		<string>BC36A3C7-F9B2-47D4-83FB-2BEB93F14889</string>
 		<string>5AED5DFA-F084-4F12-8A06-D51C78E91D05</string>
@@ -259,11 +268,8 @@
 		<string>37C520F9-A379-4BBC-AF62-22F7C0B63955</string>
 		<string>06BAABEC-B819-4778-94FF-C744CF5DD7CD</string>
 		<string>0E901597-FFB6-4D81-A57D-821A9B5089A5</string>
-		<string>6177C3DA-C580-11D9-B649-000393D4B5C8</string>
 		<string>8F41368E-4E01-41A9-8FCF-19D4A4032AE2</string>
-		<string>F330276E-C4B2-11D9-B15D-000D93B6E43C</string>
 		<string>DF9F9DF7-5F85-11D9-97D0-000D9332809C</string>
-		<string>D8B2D295-AD3C-11D9-BD97-000D93B6E43C</string>
 		<string>B345876F-1B84-4FF5-A19C-A62ADF121EC8</string>
 		<string>F80F9C22-ABB8-11D9-957A-000D93589AF6</string>
 		<string>65E2109C-4309-4079-BD25-17D8B31F03CD</string>
@@ -299,7 +305,6 @@
 		<string>EEAC1CE5-50DD-42B0-96D6-08EB81E58754</string>
 		<string>BE56EE31-7C87-43A6-B0ED-7E5C31432C1C</string>
 		<string>23B04BBB-ACE7-44A7-B313-09DC4874B2C0</string>
-		<string>7F7578B0-58F3-44B3-9278-1CBEA9C58208</string>
 		<string>03F30619-2739-447F-953D-DB225185E4D2</string>
 		<string>CC9CC561-4BD2-4E50-A211-8C6141FFDE69</string>
 		<string>2F926912-E5E6-4965-8E50-0603765DD0E6</string>
@@ -320,15 +325,16 @@
 		<string>84216BD6-F6EB-4325-9485-1665E7364102</string>
 		<string>0F8A8F61-0AE1-44F8-B4FA-01D4F877E9EE</string>
 		<string>5305AE18-1F7F-4284-A537-C0418119D078</string>
-		<string>108DEE4B-1226-43F3-A485-70786D40BDF5</string>
 		<string>FD59489B-7437-48DD-A4EC-9AF3AB2FCF19</string>
-		<string>903B133A-B073-40C2-83DD-7B1E6D435A26</string>
 		<string>C3C8F3A3-C90E-4DA3-8AB3-DB7BDA73355C</string>
 		<string>2D7B6866-400B-4120-9EC1-0397E33169A1</string>
 		<string>688FBE87-D5B4-445D-AD02-231F6E99F9C1</string>
 		<string>2BCB6911-2FE8-4D28-9E9C-4AE5F54F6E72</string>
-		<string>F38DDE93-BF77-449D-A4C9-6C525ECAC6FB</string>
-		<string>445F9B97-7D25-4262-A715-03F9D688856A</string>
+		<string>163496E6-B268-4703-9B0D-BFEE69198320</string>
+		<string>70304529-AF09-4FED-ADD4-22333FB92DCD</string>
+		<string>2834FA08-3BA7-42CD-8D91-0B338E04C821</string>
+		<string>762B99F5-78FC-4AF6-A02D-77D4A8D8E2B6</string>
+		<string>4429964E-E743-4131-96E8-BD499503DFF1</string>
 		<string>47F30BA1-6B1D-11D9-9A60-000D93589AF6</string>
 		<string>3BEEA00C-6B1D-11D9-B8AD-000D93589AF6</string>
 		<string>2ACA20AA-B008-469B-A04A-6DE232973ED8</string>
