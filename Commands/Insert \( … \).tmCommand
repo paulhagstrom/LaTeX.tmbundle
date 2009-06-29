@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+require ENV['TM_SUPPORT_PATH'] + '/lib/escape.rb'
+if ENV['TM_SELECTED_TEXT'].nil? then
+  print "\\( $0 \\)"
+else
+  print "\\( #{e_sn ENV['TM_SELECTED_TEXT']}$0 \\)"
+end</string>
+	<key>fallbackInput</key>
+	<string>none</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>$</string>
+	<key>name</key>
+	<string>Insert \( … \)</string>
+	<key>output</key>
+	<string>insertAsSnippet</string>
+	<key>scope</key>
+	<string>text.tex.latex - constant.character.escape.tex</string>
+	<key>uuid</key>
+	<string>70304529-AF09-4FED-ADD4-22333FB92DCD</string>
+</dict>
+</plist>

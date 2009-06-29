@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/ruby
+
+require ENV["TM_SUPPORT_PATH"] + "/lib/exit_codes"
+require ENV["TM_SUPPORT_PATH"] + "/lib/escape"
+
+math = $stdin.read
+
+if math =~ /\$((.|\n)*)\$/
+  $stdout &lt;&lt; "\\(#{e_snp($1)}\\)"
+elsif math =~ /\\\(((.|\n)*)\\\)/
+  $stdout &lt;&lt; "\\[#{$1}\\]"
+elsif math =~ /\\\[((.|\n)*)\\\]/
+  $stdout &lt;&lt; "\\(#{$1}\\)"
+else
+  TextMate.exit_show_tool_tip("Unrecognized math delimeters in “#{math}”")
+end
+</string>
+	<key>fallbackInput</key>
+	<string>scope</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>$</string>
+	<key>name</key>
+	<string>Cycle $ … $ → \( … \) ⟷ \[ … \]</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>scope</key>
+	<string>text.tex string.other.math - constant.character.escape</string>
+	<key>uuid</key>
+	<string>762B99F5-78FC-4AF6-A02D-77D4A8D8E2B6</string>
+</dict>
+</plist>
