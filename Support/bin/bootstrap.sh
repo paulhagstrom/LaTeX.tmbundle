@@ -4,8 +4,7 @@
 eval document=\$$#;
 
 ext=${document##*.}
-
-documentdir=$(dirname "$document");
+documentdir="$(dirname "$document")";
 jobname="$(basename -s ".$ext" ".$document")";
 
 cd "$documentdir";
@@ -68,15 +67,13 @@ fi
 grep -q '\\begin{document}' "$document";
 if [ $? != 0 ]; then
   fragment="$document";
-  document="$outputdir/$jobname.$ext";
-  
-  cp "$document" "$document.bak";
+  document="$TMPDIR/$jobname.$ext";
   
   if [ -z "$TM_LATEX_DEFAULT_PREAMBLE" ]; then
     export TM_LATEX_DEFAULT_PREAMBLE="$TM_BUNDLE_SUPPORT/lib/default-preamble.tex"
   fi
   
-  echo "-->Compiling with default preamble $(basename "$TM_LATEX_DEFAULT_PREAMBLE")…"
+  echo "-->Compiling with default preamble $(basename "$TM_LATEX_DEFAULT_PREAMBLE")"
   cat "$TM_LATEX_DEFAULT_PREAMBLE" > "$document";
   
   echo "\\begin{document}" >> "$document";
