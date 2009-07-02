@@ -31,7 +31,7 @@
 	<key>name</key>
 	<string>Overtype \) / \]</string>
 	<key>scope</key>
-	<string>text.tex.latex string.other.math.latex punctuation.definition.string.end.latex</string>
+	<string>text.tex.latex string.other.math.latex</string>
 	<key>uuid</key>
 	<string>4429964E-E743-4131-96E8-BD499503DFF1</string>
 </dict>
