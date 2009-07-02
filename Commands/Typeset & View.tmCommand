@@ -38,7 +38,7 @@ TextMate::Executor.make_project_master_current_document
 p = Pathname(ENV["TM_FILEPATH"])
 pdf = ENV["TM_FILEPATH"].gsub(/#{p.extname}$/, ".pdf")
 
-args = [ENV["TM_LATEX"] || "pdflatex", ENV["TM_LATEX_FLAGS"], ENV["TM_FILEPATH"]]
+args = [ENV["TM_LATEX"] || "pdflatex", ENV["TM_LATEX_FLAGS"], ENV["TM_FILEPATH"]].compact
 opts = {:verb =&gt; "Typesetting", :version_regex =&gt; /\A(.*)$\n?((?:.|\n)*)/}
 
 highest_warning = 0

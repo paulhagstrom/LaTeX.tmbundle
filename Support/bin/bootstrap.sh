@@ -3,13 +3,20 @@
 # get the document's filename.
 eval document=\$$#;
 
-ext=${document##*.}
-documentdir="$(dirname "$document")";
-jobname="$(basename -s ".$ext" ".$document")";
+# enable synctex by default
+synctex=1;
 
-cd "$documentdir";
+dirname="$(dirname "$document")";
+ext=${document##*.}
+basename=$(basename -s ".$ext" "$document");
+jobname="$basename";
+
+if [ -n $TM_LATEX_HIDE_AUX_FILES ]; then jobname=".$jobname"; fi
+
+cd "$dirname";
 
 # paths to the auxillary files we care about.
+syn="$jobname.synctex.gz"
 idx="$jobname.idx";
 aux="$jobname.aux";
 blg="$jobname.blg";
@@ -66,14 +73,18 @@ fi
 
 grep -q '\\begin{document}' "$document";
 if [ $? != 0 ]; then
-  fragment="$document";
-  document="$TMPDIR/$jobname.$ext";
   
+  # turn off synctex when compiliing document fragments.
+  synctex=0; rm "$syn";
+  
+  fragment="$document";
+  document="$TMPDIR/$(basename "$document")-wrap";
+    
   if [ -z "$TM_LATEX_DEFAULT_PREAMBLE" ]; then
     export TM_LATEX_DEFAULT_PREAMBLE="$TM_BUNDLE_SUPPORT/lib/default-preamble.tex"
   fi
   
-  echo "-->Compiling with default preamble $(basename "$TM_LATEX_DEFAULT_PREAMBLE")"
+  echo "-->Using $(basename "$TM_LATEX_DEFAULT_PREAMBLE")"
   cat "$TM_LATEX_DEFAULT_PREAMBLE" > "$document";
   
   echo "\\begin{document}" >> "$document";
@@ -82,24 +93,27 @@ if [ $? != 0 ]; then
 fi
 
 i=0;
-while [ $i -lt 5 ]; do
+while [ $i -lt 5 ]; do # we never need more than five iterations.
   
-  let i=i+1
+  let i=i+1;
+  
+  # check if we are done compiling.
   if [ $rerun -eq 0 ]; then break; else rerun=0; fi
 
   if [ $i -gt 1 ]; then
     echo "--------------------------------------------------------------------------------";
   fi
   
-  # get file hashes so we can notice if they change.
+  # get index/citation hashes so we can notice if they change.
   if [ -e "$idx" ]; then idxhash=$(md5 -q "$idx"); fi
   if [[ -e "$aux" && $(egrep '^\\bibdata' "$aux") ]]; then
     bibhash=$(egrep '^\\bib' "$aux" | md5 -q);
   fi
   
   echo "-->Typesetting $(basename "$document")";
+  
   # run latex and watch the output for lines that tell us to run again.
-  "${@:1:$#-1}"  -halt-on-error -synctex=1 -parse-first-line -output-format=pdf -jobname="$jobname" "$document" \
+  "${@:1:$#-1}"  -halt-on-error -synctex=$synctex -parse-first-line -output-format=pdf -jobname="$jobname" "$document" \
       | awk '{print $0;} /Rerun/ { r=1 } END{ exit r  }';
 
   rc=(${PIPESTATUS[@]}); rerun=${rc[1]};
@@ -125,3 +139,6 @@ while [ $i -lt 5 ]; do
   fi
 
 done
+
+mv "$pdf" "$basename.pdf"
+if [ $synctex -eq 1 ]; then mv "$syn" "$basename.synctex.gz"; fi
