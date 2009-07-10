@@ -33,44 +33,8 @@ if [ -e "$blg" ]; then
   done
 fi
 
-ranbibtex=0; rerun=1;
-
-# if the document IS a preamble.
-if [[ "$document" = *'preamble.tex' ]]; then
-  echo "-->Compiling preamble";
-  "${@:1:$#-1}" -halt-on-error -output-format=pdf -jobname="$jobname" -ini \&latex "$document" \\dump;
-  exit $?;
-fi
-
-# Check if the document specifies a fmt file.
-firstline=$(head -n 1 "$document" | awk '/^%&.*/{print substr($1, 3)}')
-if [ -e "$firstline" ]; then
-  preamble="${firstline}.tex"
-  echo "-->$preamble"
-fi
-
-# Compile the fmt file if necessary.
-if [[ -e "$preamble" ]]; then
-
-  fmt="$(basename -s .tex "$preamble").fmt";
-  
-  # do we need to update the fmt file?
-  if [[ ! -e "$fmt" || "$preamble" -nt "$fmt" ]]; then
-    
-    echo "-->Compiling preamble";
-    
-    # compile preamble
-    "${@:1:$#-1}" -halt-on-error -jobname="$(basename -s .tex "$preamble")" -output-format=pdf -ini \&latex "$preamble" \\dump; rc=$?;
-    if [ $rc -ne 0 ]; then exit $rc; fi
-    
-    echo "--------------------------------------------------------------------------------";
-  
-  fi
-fi
-
 # Set up a basic preamble and wrap the document in \begin{document} / \end{document}
 # when the file is a TeX fragment.
-
 grep -q '\\begin{document}' "$document";
 if [ $? != 0 ]; then
   
@@ -81,28 +45,70 @@ if [ $? != 0 ]; then
   document="$TMPDIR/$(basename "$document")-wrap";
     
   if [ -z "$TM_LATEX_DEFAULT_PREAMBLE" ]; then
-    export TM_LATEX_DEFAULT_PREAMBLE="$TM_BUNDLE_SUPPORT/lib/default-preamble.tex"
+    export TM_LATEX_DEFAULT_PREAMBLE="$TM_BUNDLE_SUPPORT/lib/default-preamble"
   fi
   
-  echo "-->Using $(basename "$TM_LATEX_DEFAULT_PREAMBLE")"
-  cat "$TM_LATEX_DEFAULT_PREAMBLE" > "$document";
+  echo "-->Using default preamble"
   
+  # cat "$TM_LATEX_DEFAULT_PREAMBLE" > "$document";
+  
+  echo "%&$(dirname "$TM_LATEX_DEFAULT_PREAMBLE")/$(basename -s ".tex" "$TM_LATEX_DEFAULT_PREAMBLE")" > "$document";
   echo "\\begin{document}" >> "$document";
   cat "$fragment" >> "$document";
   echo "\\end{document}" >> "$document";
+  
 fi
 
-i=0;
-while [ $i -lt 5 ]; do # we never need more than five iterations.
+# if the document IS a preamble.
+if [[ "$document" = *'preamble.tex' ]]; then
+  echo "-->Compiling preamble";
+  "${@:1:$#-1}" -halt-on-error -output-format=pdf -jobname="$jobname" -ini \&latex "$document" \\dump;
+  exit $?;
+fi
+
+# Check if the document specifies a fmt file.
+ltx="$(head -n 1 "$document" | awk '/^%&.*/{print substr($1, 3)}').ltx"
+# Compile the fmt file if necessary.
+if [[ -a "$ltx" ]]; then
+  pushd $(dirname "$ltx")
+
+  fmt="$(dirname "$ltx")/$(basename -s .ltx "$ltx").fmt";
   
-  let i=i+1;
+  # do we need to update the fmt file?
+  if [[ ! -e "$fmt" || "$ltx" -nt "$fmt" ]]; then
+    
+    echo "-->Compiling preamble";
+    
+    # compile preamble
+    "${@:1:$#-1}" -halt-on-error \
+                  -jobname="$(basename -s '.ltx' "$ltx")" \
+                  -output-format=pdf \
+                  -ini \&latex "$ltx" \\dump;
+    
+    rc=$?;
+    if [ $rc -ne 0 ]; then
+      echo "-->Failed to compile default preamble."
+      exit $rc;
+    fi
+    
+  fi
+  
+  popd
+fi
+
+
+# some flags to help us determine when to run or not run
+ranbibtex=0; rerun=1;
+
+
+for i in `jot 4`; do # we never need more than five iterations.
   
   # check if we are done compiling.
   if [ $rerun -eq 0 ]; then break; else rerun=0; fi
 
-  if [ $i -gt 1 ]; then
+  # if [ $i -gt 1 ]; then
     echo "--------------------------------------------------------------------------------";
-  fi
+  # fi
   
   # get index/citation hashes so we can notice if they change.
   if [ -e "$idx" ]; then idxhash=$(md5 -q "$idx"); fi
@@ -113,8 +119,13 @@ while [ $i -lt 5 ]; do # we never need more than five iterations.
   echo "-->Typesetting $(basename "$document")";
   
   # run latex and watch the output for lines that tell us to run again.
-  "${@:1:$#-1}"  -halt-on-error -synctex=$synctex -parse-first-line -output-format=pdf -jobname="$jobname" "$document" \
-      | awk '{print $0;} /Rerun/ { r=1 } END{ exit r  }';
+  "${@:1:$#-1}"  -halt-on-error      \
+                 -synctex=$synctex   \
+                 -parse-first-line   \
+                 -output-format=pdf  \
+                 -jobname="$jobname" \
+                 "$document"         \
+    | awk '{print $0;} /Rerun/ { r=1 } END{ exit r  }';
 
   rc=(${PIPESTATUS[@]}); rerun=${rc[1]};
 
