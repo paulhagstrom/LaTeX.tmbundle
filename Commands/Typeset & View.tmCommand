@@ -45,7 +45,12 @@ highest_warning = 0
 printing_an_error = false
 
 TextMate::Executor.run(args, opts) do |line, type|
-
+  
+  if ENV.has_key?("TM_LATEX_DEBUG")
+    line
+    next
+  end
+  
   printing_an_error = true if line =~ /^!(?!\s*==&gt;)/
   update_current_file(line) unless printing_an_error
 
