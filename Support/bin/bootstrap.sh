@@ -145,7 +145,7 @@ for i in `jot 4`; do # we never need more than five iterations.
   then
     echo "--------------------------------------------------------------------------------";
     echo "-->Compiling bibliography";
-    bibtex "$TM_BIBTEX_FLAGS" "$aux";
+    eval bibtex "$TM_BIBTEX_FLAGS" '"$aux"';
     ranbib=1; rerun=1;
   fi
 
