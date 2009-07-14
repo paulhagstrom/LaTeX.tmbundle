@@ -11,7 +11,7 @@ ext=${document##*.}
 basename=$(basename -s ".$ext" "$document");
 jobname="$basename";
 
-if [ -n $TM_LATEX_HIDE_AUX_FILES ]; then jobname=".$jobname"; fi
+if [ -n "$TM_LATEX_HIDE_AUX_FILES" ]; then jobname=".$jobname"; fi
 
 cd "$dirname";
 
@@ -117,6 +117,15 @@ for i in `jot 4`; do # we never need more than five iterations.
   fi
   
   echo "-->Typesetting $(basename "$document")";
+  
+  if [ -n "$TM_LATEX_DEBUG" ]; then
+    echo '$' "${@:1:$#-1}"  -halt-on-error      \
+                   -synctex=$synctex   \
+                   -parse-first-line   \
+                   -output-format=pdf  \
+                   -jobname="\"$jobname\"" \
+                   "\"$document\"";
+  fi
   
   # run latex and watch the output for lines that tell us to run again.
   "${@:1:$#-1}"  -halt-on-error      \
