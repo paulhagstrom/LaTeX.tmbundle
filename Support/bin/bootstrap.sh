@@ -35,11 +35,11 @@ fi
 
 # Set up a basic preamble and wrap the document in \begin{document} / \end{document}
 # when the file is a TeX fragment.
-grep -q '\\begin{document}' "$document";
+grep -q '\\documentclass\|\\begin[{]document[}]' "$document";
 if [ $? != 0 ]; then
   
   # turn off synctex when compiliing document fragments.
-  synctex=0; rm "$syn";
+  synctex=0; rm -f "$syn";
   
   fragment="$document";
   document="$TMPDIR/$(basename "$document")-wrap";
@@ -47,9 +47,7 @@ if [ $? != 0 ]; then
   if [ -z "$TM_LATEX_DEFAULT_PREAMBLE" ]; then
     export TM_LATEX_DEFAULT_PREAMBLE="$TM_BUNDLE_SUPPORT/lib/default-preamble"
   fi
-  
-  echo "-->Using default preamble"
-  
+    
   # cat "$TM_LATEX_DEFAULT_PREAMBLE" > "$document";
   
   echo "%&$(dirname "$TM_LATEX_DEFAULT_PREAMBLE")/$(basename -s ".tex" "$TM_LATEX_DEFAULT_PREAMBLE")" > "$document";
@@ -59,10 +57,14 @@ if [ $? != 0 ]; then
   
 fi
 
+
 # if the document IS a preamble.
-if [[ "$document" = *'preamble.tex' ]]; then
-  echo "-->Compiling preamble";
-  "${@:1:$#-1}" -halt-on-error -output-format=pdf -jobname="$jobname" -ini \&latex "$document" \\dump;
+if [[ "$document" = *'.ltx' ]]; then
+  echo "-->Dumping format file";
+  eval ${@:1:$#-1} -halt-on-error \
+                   -output-format=pdf \
+                   -jobname='"$jobname"' \
+                   -ini '\&latex' '"$document"' '\\dump';
   exit $?;
 fi
 
@@ -70,36 +72,44 @@ fi
 ltx="$(head -n 1 "$document" | awk '/^%&.*/{print substr($1, 3)}').ltx"
 # Compile the fmt file if necessary.
 if [[ -a "$ltx" ]]; then
-  pushd $(dirname "$ltx")
+  pushd $(dirname "$ltx") > /dev/null
 
   fmt="$(dirname "$ltx")/$(basename -s .ltx "$ltx").fmt";
   
   # do we need to update the fmt file?
   if [[ ! -e "$fmt" || "$ltx" -nt "$fmt" ]]; then
     
-    echo "-->Compiling preamble";
+    echo "-->Precompiling format file $(basename "$fmt")";
+    
+    if [ -n "$TM_LATEX_DEBUG" ]; then
+      eval echo '$' ${@:1:$#-1} -halt-on-error \
+                                -jobname='"$(basename -s '.ltx' "$ltx")"' \
+                                -output-format=pdf \
+                                -ini '\&latex' '"$ltx"' '\\\\dump' >&2;
+    fi
+
     
     # compile preamble
-    "${@:1:$#-1}" -halt-on-error \
-                  -jobname="$(basename -s '.ltx' "$ltx")" \
-                  -output-format=pdf \
-                  -ini \&latex "$ltx" \\dump;
+    eval ${@:1:$#-1} -halt-on-error \
+                     -jobname='"$(basename -s '.ltx' "$ltx")"' \
+                     -output-format=pdf \
+                     -ini '\&latex' '"$ltx"' '\\dump';
     
     rc=$?;
     if [ $rc -ne 0 ]; then
-      echo "-->Failed to compile default preamble."
+      echo "-->Failed to dump the default format file, quitting"
       exit $rc;
     fi
     
+  else
+    echo "-->Using precompiled format $(basename "$fmt")"
   fi
   
-  popd
+  popd > /dev/null
 fi
-
 
 # some flags to help us determine when to run or not run
 ranbibtex=0; rerun=1;
-
 
 for i in `jot 4`; do # we never need more than five iterations.
   
@@ -119,21 +129,21 @@ for i in `jot 4`; do # we never need more than five iterations.
   echo "-->Typesetting $(basename "$document")";
   
   if [ -n "$TM_LATEX_DEBUG" ]; then
-    echo '$' "${@:1:$#-1}"  -halt-on-error      \
-                   -synctex=$synctex   \
-                   -parse-first-line   \
-                   -output-format=pdf  \
-                   -jobname="\"$jobname\"" \
-                   "\"$document\"";
+    eval echo '$' "${@:1:$#-1}" -halt-on-error      \
+                         -synctex='$synctex'   \
+                         -parse-first-line   \
+                         -output-format=pdf  \
+                         -jobname='"$jobname"' \
+                         '"$document"' >&2;
   fi
   
   # run latex and watch the output for lines that tell us to run again.
-  "${@:1:$#-1}"  -halt-on-error      \
-                 -synctex=$synctex   \
-                 -parse-first-line   \
-                 -output-format=pdf  \
-                 -jobname="$jobname" \
-                 "$document"         \
+  eval ${@:1:$#-1} -halt-on-error      \
+                   -synctex='$synctex'   \
+                   -parse-first-line   \
+                   -output-format=pdf  \
+                   -jobname='"$jobname"' \
+                   '"$document"'         \
     | awk '{print $0;} /Rerun/ { r=1 } END{ exit r  }';
 
   rc=(${PIPESTATUS[@]}); rerun=${rc[1]};
