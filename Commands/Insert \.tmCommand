@@ -5,7 +5,9 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>if [ -n "$TM_SELECTED_TEXT" ]; then
+	<string>#!/bin/bash
+
+if [ -n "$TM_SELECTED_TEXT" ]; then
 	echo -n '\\${1:(}$TM_SELECTED_TEXT${1/^(\()|(\[)|([a-zA-Z]+(\{)?)/(?1:\\\))(?2:\\])(?3:(?4:}))/}'
 else
 	echo -n '\\'
