@@ -1,5 +1,7 @@
 #!/bin/bash
 
+shopt -s extglob;
+
 # get the document's filename.
 eval document=\$$#;
 
@@ -11,17 +13,116 @@ ext=${document##*.}
 basename=$(basename -s ".$ext" "$document");
 jobname="$basename";
 
+args='-halt-on-error -no-parse-first-line -output-format=pdf -file-line-error';
+
 if [ -n "$TM_LATEX_HIDE_AUX_FILES" ]; then jobname=".$jobname"; fi
 
 cd "$dirname";
 
-# paths to the auxillary files we care about.
+# paths to the auxillary files we care about. we will
+# watch changes in these files, and compile accordingly.
+
 syn="$jobname.synctex.gz"
+log="$jobname.log";
 idx="$jobname.idx";
 aux="$jobname.aux";
 blg="$jobname.blg";
 bbl="$jobname.bbl";
 pdf="$jobname.pdf";
+
+# if the document IS a preamble.
+if [[ "$document" = *'.ltx' ]]; then
+  echo "-->Dumping format file";
+  eval echo '$' ${@:1:$#-1} $args -jobname='$jobname' \
+                                  -ini \
+                                  '\"\&latex\"' \
+                                  '\"$document\"' \
+                                  '\\\\dump' >&2;
+                                  
+  eval ${@:1:$#-1} $args -jobname='$jobname' \
+                         -ini \
+                         '\&latex' \
+                         '"$document"' \
+                         '\\dump';
+  rc=$?;
+  rm -f "$pdf"; rm -f "$log";
+  exit $rc;
+fi
+
+# Set up a basic preamble and wrap the document in \begin{document} / \end{document}
+# when the file is a TeX fragment.
+
+if ! grep -q '\\documentclass' "$document"; then
+  
+  # See if the file specifies a fmt.
+  if head -n 1 "$document" | grep -q '^%&'; then
+    
+    fmt="$(head -n 1 "$document" | ruby -ne 'puts $_.match(/^%&\s*(\/?(?:\\ |[^ ])*?)(?:\.fmt|\.ltx)?(?=\s)/)[1]')";
+    
+  # Otherwise, we use the default.
+  else
+
+    fmt="${TM_LATEX_DEFAULT_FORMAT:-$TM_BUNDLE_SUPPORT/lib/tmdefault.fmt}";
+    
+  fi
+
+  fmt="${fmt%\.*(fmt|ltx)}.fmt";
+  ltx="${fmt%\.fmt}.ltx";
+
+  export TEXFORMATS=":${TEXFORMATS}:$(dirname "$fmt"):"
+  
+  args="$args -fmt=\"$(basename -s ".fmt" "$fmt")\"";
+    
+  # turn off synctex when compiling document fragments.
+  synctex=0; rm -f "$syn";
+  
+  fragment="$document-frag";
+  mv "$document" "$fragment"
+  # document="$TMPDIR/$(basename "$document")";
+  
+  echo "\\begin{document}" > "$document";
+  cat "$fragment" >> "$document";
+  echo >> "$document"; 
+  echo "\\end{document}" >> "$document"; 
+  
+fi
+
+
+# Compile the fmt file if necessary.
+if [[ -a "$ltx" ]]; then
+  pushd "$(dirname "$ltx")" > /dev/null
+  
+  # do we need to update the fmt file?
+  if [[ ! -e "$fmt" || "$ltx" -nt "$fmt" ]]; then
+    
+    echo "-->Precompiling format file $(basename "$fmt")";
+    
+    if [ -n "$TM_LATEX_DEBUG" ]; then
+      eval echo '$' ${@:1:$#-1} '$args' \
+                                -jobname='"$(basename -s '.ltx' "$ltx")"' \
+                                -ini '\&latex' '\"$ltx\"' '\\\\dump' >&2;
+    fi
+
+    
+    # compile preamble
+    eval ${@:1:$#-1} '$args' \
+                     -jobname='"$(basename -s '.ltx' "$ltx")"' \
+                     -ini '\&latex' '\"$ltx\"' '\\dump';
+    
+    rc=$?;
+    if [ $rc -ne 0 ]; then
+      echo "-->Failed to dump the default format file, quitting"
+      exit $rc;
+    fi
+    
+    #rm "$(dirname "$ltx")/$(basename -s .ltx "$ltx").(log|pdf)";
+    
+  else
+    echo "-->Using precompiled format $(basename "$fmt")"
+  fi
+    
+  popd > /dev/null
+fi
 
 # Trash outdated auxillary files to force TeX to regenerate them.
 if [ -e "$blg" ]; then
@@ -33,81 +134,6 @@ if [ -e "$blg" ]; then
   done
 fi
 
-# Set up a basic preamble and wrap the document in \begin{document} / \end{document}
-# when the file is a TeX fragment.
-grep -q '\\documentclass\|\\begin[{]document[}]' "$document";
-if [ $? != 0 ]; then
-  
-  # turn off synctex when compiliing document fragments.
-  synctex=0; rm -f "$syn";
-  
-  fragment="$document";
-  document="$TMPDIR/$(basename "$document")-wrap";
-    
-  if [ -z "$TM_LATEX_DEFAULT_PREAMBLE" ]; then
-    export TM_LATEX_DEFAULT_PREAMBLE="$TM_BUNDLE_SUPPORT/lib/default-preamble"
-  fi
-    
-  # cat "$TM_LATEX_DEFAULT_PREAMBLE" > "$document";
-  
-  echo "%&$(dirname "$TM_LATEX_DEFAULT_PREAMBLE")/$(basename -s ".tex" "$TM_LATEX_DEFAULT_PREAMBLE")" > "$document";
-  echo "\\begin{document}" >> "$document";
-  cat "$fragment" >> "$document";
-  echo "\\end{document}" >> "$document";
-  
-fi
-
-
-# if the document IS a preamble.
-if [[ "$document" = *'.ltx' ]]; then
-  echo "-->Dumping format file";
-  eval ${@:1:$#-1} -halt-on-error \
-                   -output-format=pdf \
-                   -jobname='"$jobname"' \
-                   -ini '\&latex' '"$document"' '\\dump';
-  exit $?;
-fi
-
-# Check if the document specifies a fmt file.
-ltx="$(head -n 1 "$document" | awk '/^%&.*/{print substr($1, 3)}').ltx"
-# Compile the fmt file if necessary.
-if [[ -a "$ltx" ]]; then
-  pushd $(dirname "$ltx") > /dev/null
-
-  fmt="$(dirname "$ltx")/$(basename -s .ltx "$ltx").fmt";
-  
-  # do we need to update the fmt file?
-  if [[ ! -e "$fmt" || "$ltx" -nt "$fmt" ]]; then
-    
-    echo "-->Precompiling format file $(basename "$fmt")";
-    
-    if [ -n "$TM_LATEX_DEBUG" ]; then
-      eval echo '$' ${@:1:$#-1} -halt-on-error \
-                                -jobname='"$(basename -s '.ltx' "$ltx")"' \
-                                -output-format=pdf \
-                                -ini '\&latex' '"$ltx"' '\\\\dump' >&2;
-    fi
-
-    
-    # compile preamble
-    eval ${@:1:$#-1} -halt-on-error \
-                     -jobname='"$(basename -s '.ltx' "$ltx")"' \
-                     -output-format=pdf \
-                     -ini '\&latex' '"$ltx"' '\\dump';
-    
-    rc=$?;
-    if [ $rc -ne 0 ]; then
-      echo "-->Failed to dump the default format file, quitting"
-      exit $rc;
-    fi
-    
-  else
-    echo "-->Using precompiled format $(basename "$fmt")"
-  fi
-  
-  popd > /dev/null
-fi
-
 # some flags to help us determine when to run or not run
 ranbibtex=0; rerun=1;
 
@@ -116,9 +142,9 @@ for i in `jot 4`; do # we never need more than five iterations.
   # check if we are done compiling.
   if [ $rerun -eq 0 ]; then break; else rerun=0; fi
 
-  # if [ $i -gt 1 ]; then
+  if [ $i -gt 1 ]; then
     echo "--------------------------------------------------------------------------------";
-  # fi
+  fi
   
   # get index/citation hashes so we can notice if they change.
   if [ -e "$idx" ]; then idxhash=$(md5 -q "$idx"); fi
@@ -129,21 +155,17 @@ for i in `jot 4`; do # we never need more than five iterations.
   echo "-->Typesetting $(basename "$document")";
   
   if [ -n "$TM_LATEX_DEBUG" ]; then
-    eval echo '$' "${@:1:$#-1}" -halt-on-error      \
-                         -synctex='$synctex'   \
-                         -parse-first-line   \
-                         -output-format=pdf  \
-                         -jobname='"$jobname"' \
-                         '"$document"' >&2;
+    eval echo '$' "${@:1:$#-1}" $args \
+                                -jobname='"$jobname"' \
+                                -synctex='"$synctex"' \
+                                '"$document"' >&2;
   fi
   
   # run latex and watch the output for lines that tell us to run again.
-  eval ${@:1:$#-1} -halt-on-error      \
-                   -synctex='$synctex'   \
-                   -parse-first-line   \
-                   -output-format=pdf  \
+  eval ${@:1:$#-1} $args \
                    -jobname='"$jobname"' \
-                   '"$document"'         \
+                   -synctex='"$synctex"' \
+                   '"$document"' \
     | awk '{print $0;} /Rerun/ { r=1 } END{ exit r  }';
 
   rc=(${PIPESTATUS[@]}); rerun=${rc[1]};
