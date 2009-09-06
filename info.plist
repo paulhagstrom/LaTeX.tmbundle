@@ -249,7 +249,7 @@
 		</dict>
 	</dict>
 	<key>name</key>
-	<string>LaTeX</string>
+	<string>LaTeX 2</string>
 	<key>ordering</key>
 	<array>
 		<string>43E6240E-619A-4FC7-A256-1B885A1360D0</string>
@@ -328,13 +328,16 @@
 		<string>FD59489B-7437-48DD-A4EC-9AF3AB2FCF19</string>
 		<string>C3C8F3A3-C90E-4DA3-8AB3-DB7BDA73355C</string>
 		<string>2D7B6866-400B-4120-9EC1-0397E33169A1</string>
-		<string>688FBE87-D5B4-445D-AD02-231F6E99F9C1</string>
 		<string>2BCB6911-2FE8-4D28-9E9C-4AE5F54F6E72</string>
 		<string>163496E6-B268-4703-9B0D-BFEE69198320</string>
+		<string>CA5C7A1B-71CB-40C0-9BCE-6859974A8787</string>
+		<string>239CDDA5-D274-48CB-AA41-A9338E75939B</string>
 		<string>70304529-AF09-4FED-ADD4-22333FB92DCD</string>
+		<string>BF86DD19-41A4-4865-A2F3-5CEF06886066</string>
 		<string>2834FA08-3BA7-42CD-8D91-0B338E04C821</string>
 		<string>762B99F5-78FC-4AF6-A02D-77D4A8D8E2B6</string>
 		<string>4429964E-E743-4131-96E8-BD499503DFF1</string>
+		<string>1FD0F4E4-6F8F-41BD-8EBC-A9FCC00D07BB</string>
 		<string>47F30BA1-6B1D-11D9-9A60-000D93589AF6</string>
 		<string>3BEEA00C-6B1D-11D9-B8AD-000D93589AF6</string>
 		<string>2ACA20AA-B008-469B-A04A-6DE232973ED8</string>
@@ -361,6 +364,6 @@
 		<string>BDA02D31-3097-4726-9A93-7AAA4576F676</string>
 	</array>
 	<key>uuid</key>
-	<string>46788DCE-6227-11D9-BFB1-000D93589AF6</string>
+	<string>46788DCE-6227-11D9-BFB1-000D93589AF7</string>
 </dict>
 </plist>
