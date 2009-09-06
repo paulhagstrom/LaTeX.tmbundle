@@ -1482,6 +1482,25 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			</array>
 		</dict>
 		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.begin.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.end.latex</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>(\\\()(\s*)(\\\))</string>
+			<key>name</key>
+			<string>string.other.math.empty.latex</string>
+		</dict>
+		<dict>
 			<key>begin</key>
 			<string>\\\(</string>
 			<key>beginCaptures</key>
