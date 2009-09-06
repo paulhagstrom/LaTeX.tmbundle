@@ -47,8 +47,7 @@ printing_an_error = false
 TextMate::Executor.run(args, opts) do |line, type|
   
   if ENV.has_key?("TM_LATEX_DEBUG")
-    line
-    next
+    next(line + "&lt;br&gt;")
   end
   
   printing_an_error = true if line =~ /^!(?!\s*==&gt;)/
