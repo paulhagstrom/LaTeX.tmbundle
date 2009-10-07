@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+
+require ENV["TM_SUPPORT_PATH"] + "/lib/ui"
+require ENV['TM_SUPPORT_PATH'] +'/lib/escape'
+
+selected_text = e_sn(ENV['TM_SELECTED_TEXT'])
+selected_text_display = "#{selected_text[0,10]}#{selected_text.length&gt;10 ? "…" : ''}"
+
+choices = [
+	{	'display'=&gt;"\\begin{} #{selected_text_display} \\end{}",
+		'match'=&gt;'\begin',
+		'insert'=&gt;"{$1}
+	#{selected_text}$2
+\\end{$1}$0",
+	},
+	{	'display'=&gt;"\\( #{selected_text_display} \\)",
+		'match' =&gt; '\( ',
+		'insert' =&gt; "#{selected_text}$1 \\)$0",
+	},
+	{	'display'=&gt;"\\[ #{selected_text_display} \\]",
+		'match' =&gt; '\[ ',
+		'insert' =&gt; "#{selected_text}$1 \\]$0",
+	},
+]
+
+TextMate::UI.complete(choices, :initial_filter =&gt; '\\', :key_pressed =&gt; '\\', :extra_chars=&gt;"[(", :dont_return_choice=&gt;true)</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>\</string>
+	<key>name</key>
+	<string>Autocomplete</string>
+	<key>output</key>
+	<string>discard</string>
+	<key>scope</key>
+	<string>text.tex.latex</string>
+	<key>uuid</key>
+	<string>804463D8-C615-4AF4-87CA-07171E21C70D</string>
+</dict>
+</plist>
