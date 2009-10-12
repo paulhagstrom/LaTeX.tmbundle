@@ -1,3 +1,6 @@
+require ENV["TM_SUPPORT_PATH"] + '/lib/escape'
+require 'pp'
+
 def choices_for_selected_text
   
   selected_text = e_sn(ENV['TM_SELECTED_TEXT'] || '…')
@@ -39,8 +42,8 @@ def choices_for_selected_text
     choices << {
       "display" => "\\#{cmd}{#{selected_text_display}}",
       "match"   => "\\#{cmd}{",
-      "insert"  => "${1:…}}\\label{#{cmd}:${2:${1/\\\\\\w*|( )|[^\\w]/(?1:_)/g}}}#{folds ? " % (fold)" : ''}
-	${3:#{selected_text}}
+      "insert"  => "${1:#{selected_text}}}\\label{#{cmd}:${2:${1/\\\\\\w*|( )|[^\\w]/(?1:_)/g}}}#{folds ? " % (fold)" : ''}
+	${3}
 #{folds ? "% #{cmd}:$2 (end)" : ""}
 $0"
     }
@@ -49,8 +52,8 @@ $0"
   choices[-2]['children'] = ["subsection", "subsubsection"].collect do |cmd|
     { "display" => "\\#{cmd}{#{selected_text_display}}",
       "match"   => "\\#{cmd}{",
-      "insert"  => "${1:…}}\\label{#{cmd}:${2:${1/\\\\\\w*|( )|[^\\w]/(?1:_)/g}}}#{folds ? " % (fold)" : ''}
-	${3:#{selected_text}}
+      "insert"  => "${1:#{selected_text}}}\\label{#{cmd}:${2:${1/\\\\\\w*|( )|[^\\w]/(?1:_)/g}}}#{folds ? " % (fold)" : ''}
+	${3}
 #{folds ? "% #{cmd}:$2 (end)" : ""}
 $0"}
   end
@@ -58,11 +61,13 @@ $0"}
   choices[-1]['children'] = ["subparagraph"].collect do |cmd|
     { "display" => "\\#{cmd}{#{selected_text_display}}",
       "match"   => "\\#{cmd}{",
-      "insert"  => "${1:…}}\\label{#{cmd}:${2:${1/\\\\\\w*|( )|[^\\w]/(?1:_)/g}}}#{folds ? " % (fold)" : ''}
-	${3:#{selected_text}}
+      "insert"  => "${1:#{selected_text}}}\\label{#{cmd}:${2:${1/\\\\\\w*|( )|[^\\w]/(?1:_)/g}}}#{folds ? " % (fold)" : ''}
+	${3}
 #{folds ? "% #{cmd}:$2 (end)" : ""}
 $0"}
   end
   
   return choices
 end
+
+puts pp choices_for_selected_text if __FILE__ == $0
