@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Disable Smart Typing after Backslashes</string>
 	<key>scope</key>
-	<string>text.tex constant.character.escape.tex, punctuation.definition, string</string>
+	<string>text.tex constant.character.escape.tex</string>
 	<key>settings</key>
 	<dict>
 		<key>highlightPairs</key>

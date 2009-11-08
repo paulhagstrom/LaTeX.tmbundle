@@ -38,7 +38,10 @@ TextMate::Executor.make_project_master_current_document
 p = Pathname(ENV["TM_FILEPATH"])
 pdf = ENV["TM_FILEPATH"].gsub(/#{p.extname}$/, ".pdf")
 
-args = [ENV["TM_LATEX"] || "pdflatex", ENV["TM_LATEX_FLAGS"], ENV["TM_FILEPATH"]].compact
+engine =  ENV["TM_LATEX"] || (`grep -c fontspec #{ENV["TM_FILEPATH"]}`.to_i &gt; 0 ? 'xelatex' : 'pdflatex')
+
+args = [engine, ENV["TM_LATEX_FLAGS"], ENV["TM_FILEPATH"]].compact
+
 opts = {:verb =&gt; "Typesetting", :version_regex =&gt; /\A(.*)$\n?((?:.|\n)*)/}
 
 highest_warning = 0
@@ -88,19 +91,25 @@ if $?.nil? or $?.exitstatus == 0
   if File.exists?(pdf) and not ENV["TM_FILEPATH"] =~ /.*-preamble.tex/
     Process.detach fork {
       `/usr/bin/osascript -e '
+      set thePDF to "#{pdf}"
+      try
         tell application "Skim"
-          set the_pdf to "#{pdf}"
-          if (count of (documents whose path is the_pdf)) = 0 then
-            open the_pdf
+          if (count of (documents whose path is thePDF)) = 0 then
+            open thePDF
           else
-            revert (documents whose path is the_pdf)
+            revert (documents whose path is thePDF)
           end if
           activate
-          tell front document to go to TeX line #{current_line} from "#{current_file}"
-        end tell'`
+          tell front document to go to TeX line #{current_line} from "#{current_file}" showing reading bar true
+        end tell
+      on error
+        tell application "Preview"
+          open thePDF
+        end tell
+      end try'`
     }
   end
-  sleep(1)
+  # sleep(5)
   TextMate::exit_discard if (ENV["TM_LATEX_WARN_LEVEL"].to_i || 0) &gt; highest_warning
 else
   TextMate::exit_show_html

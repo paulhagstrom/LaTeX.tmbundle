@@ -9,15 +9,19 @@ eval document=\$$#;
 synctex=1;
 
 dirname="$(dirname "$document")";
+cd "$dirname";
+
 ext=${document##*.}
 basename=$(basename -s ".$ext" "$document");
-jobname="$basename";
 
-args='-halt-on-error -no-parse-first-line -output-format=pdf -file-line-error';
+if [ -n "$TM_LATEX_HIDE_AUX_FILES" ];
+then jobname=".$basename";
+else jobname="$basename"; fi
 
-if [ -n "$TM_LATEX_HIDE_AUX_FILES" ]; then jobname=".$jobname"; fi
 
-cd "$dirname";
+args='-halt-on-error -no-parse-first-line -file-line-error';
+
+if [[ "$1" = *'pdflatex' ]]; then args="$args -output-format=pdf"; fi
 
 # paths to the auxillary files we care about. we will
 # watch changes in these files, and compile accordingly.
@@ -33,18 +37,8 @@ pdf="$jobname.pdf";
 # if the document IS a preamble.
 if [[ "$document" = *'.ltx' ]]; then
   echo "-->Dumping format file";
-  eval echo '$' ${@:1:$#-1} $args -jobname='$jobname' \
-                                  -ini \
-                                  '\"\&latex\"' \
-                                  '\"$document\"' \
-                                  '\\\\dump' >&2;
-                                  
-  eval ${@:1:$#-1} $args -jobname='$jobname' \
-                         -ini \
-                         '\&latex' \
-                         '"$document"' \
-                         '\\dump';
-  rc=$?;
+  eval echo '$' ${@:1:$#-1} $args -jobname='$jobname' -ini '\"\&latex\"' '\"$document\"' '\\\\dump' >&2;
+  eval ${@:1:$#-1} $args -jobname='$jobname' -ini '\&latex' '"$document"' '\\dump'; rc=$?;
   rm -f "$pdf"; rm -f "$log";
   exit $rc;
 fi
@@ -76,14 +70,14 @@ if ! grep -q '\\documentclass' "$document"; then
   # turn off synctex when compiling document fragments.
   synctex=0; rm -f "$syn";
   
-  fragment="$document-frag";
-  mv "$document" "$fragment"
-  # document="$TMPDIR/$(basename "$document")";
+  #fragment="$document-frag";
+
+  #document="$TMPDIR/$(basename "$document")";
   
-  echo "\\begin{document}" > "$document";
-  cat "$fragment" >> "$document";
-  echo >> "$document"; 
-  echo "\\end{document}" >> "$document"; 
+  #echo "\\begin{document}" > "$document";
+  #cat "$fragment" >> "$document";
+  #echo >> "$document"; 
+  #echo "\\end{document}" >> "$document"; 
   
 fi
 
@@ -98,15 +92,13 @@ if [[ -a "$ltx" ]]; then
     echo "-->Precompiling format file $(basename "$fmt")";
     
     if [ -n "$TM_LATEX_DEBUG" ]; then
-      eval echo '$' ${@:1:$#-1} '$args' \
-                                -jobname='"$(basename -s '.ltx' "$ltx")"' \
+      eval echo '$' ${@:1:$#-1} '$args' -jobname='"$(basename -s '.ltx' "$ltx")"' \
                                 -ini '\&latex' '\"$ltx\"' '\\\\dump' >&2;
     fi
 
     
     # compile preamble
-    eval ${@:1:$#-1} '$args' \
-                     -jobname='"$(basename -s '.ltx' "$ltx")"' \
+    eval ${@:1:$#-1} '$args' -jobname='"$(basename -s '.ltx' "$ltx")"' \
                      -ini '\&latex' '\"$ltx\"' '\\dump';
     
     rc=$?;
