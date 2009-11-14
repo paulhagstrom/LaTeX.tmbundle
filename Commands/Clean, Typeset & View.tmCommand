@@ -26,6 +26,7 @@ end
 ENV["TM_LATEX_DEFAULT_FORMAT"] ||= ENV["TM_BUNDLE_SUPPORT"] + "/lib/tmdefault.ltx"
 ENV["TM_LATEX"] ||= (`grep -c fontspec #{ENV["TM_FILEPATH"]}`.to_i &gt; 0 ? 'xelatex' : 'pdflatex')
 ENV["TM_LATEX_FLAGS"] ||= nil
+ENV["TM_LATEX_CLEAN_FIRST"] = 'true'
 
 TextMate.save_current_document("tex")
 
@@ -123,14 +124,14 @@ end
 	<key>input</key>
 	<string>document</string>
 	<key>keyEquivalent</key>
-	<string>@r</string>
+	<string>@R</string>
 	<key>name</key>
-	<string>Typeset &amp; View</string>
+	<string>Clean, Typeset &amp; View</string>
 	<key>output</key>
 	<string>showAsHTML</string>
 	<key>scope</key>
 	<string>text.tex,text.bibtex</string>
 	<key>uuid</key>
-	<string>43E6240E-619A-4FC7-A256-1B885A1360D0</string>
+	<string>EE6404A5-00CD-44BA-ACFD-956557FCC03B</string>
 </dict>
 </plist>
