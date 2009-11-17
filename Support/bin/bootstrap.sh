@@ -9,7 +9,7 @@ seperator(){
 };
 
 perform_command(){
-  if [ -n "$TM_LATEX_DEBUG" ]; then
+  if [ -z "$TM_LATEX_DEBUG" ]; then
     eval echo '$' $* >&2;
   fi
   eval $*;
@@ -19,7 +19,8 @@ shopt -s extglob;
 
 # parse the arguments we've been given
 engine=$1;
-if [ $# > 2 ]; then flags="${@:2:$#-1}"; fi
+if [ "$#" -gt "2" ]; then flags="${@:2:$#-1}"; fi
+info "Flags: $flags";
 eval document=\$$#;
 
 # enable synctex by default
@@ -60,7 +61,7 @@ if [[ "$document" = *'.ltx' ]]; then
   
   info "Dumping format file";
   
-  perform_command $engine $flags -jobname='$jobname' -ini '\&latex' '"$document"' '\\dump'; rc=$?;
+  perform_command "$engine" "$flags" -jobname='$jobname' -ini '\&latex' '"$document"' '\\dump'; rc=$?;
   rm -f "$pdf"; rm -f "$log";
   
   exit $rc;
