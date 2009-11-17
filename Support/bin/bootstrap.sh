@@ -61,7 +61,7 @@ if [[ "$document" = *'.ltx' ]]; then
   
   info "Dumping format file";
   
-  perform_command "$engine" "$flags" -jobname='$jobname' -ini '\&latex' '"$document"' '\\dump'; rc=$?;
+  perform_command "$engine" "$flags" -jobname='$jobname.$engine' -ini '\&latex' '"$document"' '\\dump'; rc=$?;
   rm -f "$pdf"; rm -f "$log";
   
   exit $rc;
