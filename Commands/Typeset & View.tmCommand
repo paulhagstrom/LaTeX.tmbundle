@@ -8,6 +8,7 @@
 	<string>46788DCE-6227-11D9-BFB1-000D93589AF6</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby
+# encoding: UTF-8
 
 require ENV["TM_SUPPORT_PATH"] + "/lib/tm/executor"
 require ENV["TM_SUPPORT_PATH"] + "/lib/tm/save_current_document"
@@ -23,11 +24,11 @@ def link_to_error(file, num, message)
   return "&lt;p&gt;&lt;a href=\"txmt://open?url=file://#{e_url(file)}&amp;line=#{num}\"&gt;#{File.basename file}#{num.nil? ? "" : ":"+num.to_s}:&lt;/a&gt; #{message}&lt;/p&gt;"
 end
 
+TextMate.save_current_document("tex")
+
 ENV["TM_LATEX_DEFAULT_FORMAT"] ||= ENV["TM_BUNDLE_SUPPORT"] + "/lib/tmdefault.ltx"
 ENV["TM_LATEX"] ||= (`grep -c fontspec #{ENV["TM_FILEPATH"]}`.to_i &gt; 0 ? 'xelatex' : 'pdflatex')
 ENV["TM_LATEX_FLAGS"] ||= nil
-
-TextMate.save_current_document("tex")
 
 # we need to save the sync info *before* we call
 # make_project_master_current_document or we will
@@ -91,8 +92,8 @@ TextMate::Executor.run(args, opts) do |line, type|
 end
 
 if $?.nil? or $?.exitstatus == 0
-  if File.exists?(pdf) and not ENV["TM_FILEPATH"] =~ /.*-preamble.tex/
-    Process.detach fork {
+  if File.exists?(pdf)
+	Process.detach fork {
       `/usr/bin/osascript -e '
       set thePDF to "#{pdf}"
       try
