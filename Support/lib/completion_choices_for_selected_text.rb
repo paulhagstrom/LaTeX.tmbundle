@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require ENV["TM_SUPPORT_PATH"] + '/lib/escape'
 require 'pp'
 
