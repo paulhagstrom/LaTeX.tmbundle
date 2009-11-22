@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# put our custom config on the TEXMFCNF path.
+export TEXMFCNF="$TM_BUNDLE_SUPPORT/lib/:"
+export TEXINPUTS="$TM_BUNDLE_SUPPORT/lib/:$TEXINPUTS:"
+
 info() {
   echo "-->" $*;
 };
@@ -20,7 +24,7 @@ shopt -s extglob;
 # parse the arguments we've been given
 engine=$1;
 if [ "$#" -gt "2" ]; then flags="${@:2:$#-1}"; fi
-info "Flags: $flags";
+if [ -n "$flags" ]; then info "Flags: $flags"; fi
 eval document=\$$#;
 
 # enable synctex by default
@@ -59,7 +63,7 @@ pdf="$jobname.pdf";
 # if the document IS a preamble.
 if [[ "$document" = *'.ltx' ]]; then
   
-  info "Dumping format file";
+  info "Dumping $jobname.$engine.fmt";
   
   perform_command "$engine" "$flags" -jobname='$jobname.$engine' -ini '\&latex' '"$document"' '\\dump'; rc=$?;
   rm -f "$pdf"; rm -f "$log";
@@ -85,6 +89,35 @@ if ! grep -q '\\documentclass' "$document"; then
   ltx="${ltx%\.*(fmt|ltx)}.ltx";
   fmt="${ltx%\.ltx}.$engine.fmt";
 
+  # Compile the fmt file if necessary.
+  if [[ -a "$ltx" ]]; then
+    pushd "$(dirname "$ltx")" > /dev/null
+  
+    # do we need to update the fmt file?  (check that the fmt file doesn't exist or the ltx file is newer.)
+    if [[ ! -e "$fmt" || "$ltx" -nt "$fmt" ]]; then
+    
+      info "Precompiling format file $(basename "$fmt")";
+    
+      # compile preamble
+      perform_command $engine $flags -jobname='"$(basename -s '.ltx' "$ltx").$engine"' \
+                       -ini '\&latex' '\"$ltx\"' '\\dump';
+    
+      rc=$?;
+      if [ $rc -ne 0 ]; then
+        info "Failed to dump the format file, quitting"
+        exit $rc;
+      fi
+    
+      rm "$(dirname "$ltx")/$(basename -s .ltx "$ltx").(log|pdf)";
+    
+    else
+      info "Using precompiled format $(basename "$fmt")"
+    fi
+    
+    popd > /dev/null
+  fi
+  
+  # TeX engines search TEXFORMATS for fmt files.
   export TEXFORMATS=":${TEXFORMATS}:$(dirname "$fmt"):"
   
   # add the fmt file as a command line argument.
@@ -92,35 +125,6 @@ if ! grep -q '\\documentclass' "$document"; then
   # new file with a  %! firstline.
   flags="$flags -fmt=\"$(basename -s ".fmt" "$fmt")\"";
   
-fi
-
-
-# Compile the fmt file if necessary.
-if [[ -a "$ltx" ]]; then
-  pushd "$(dirname "$ltx")" > /dev/null
-  
-  # do we need to update the fmt file?  (check that the fmt file doesn't exist or the ltx file is newer.)
-  if [[ ! -e "$fmt" || "$ltx" -nt "$fmt" ]]; then
-    
-    info "Precompiling format file $(basename "$fmt")";
-    
-    # compile preamble
-    perform_command $engine $flags -jobname='"$(basename -s '.ltx' "$ltx")"' \
-                     -ini '\&latex' '\"$ltx\"' '\\dump';
-    
-    rc=$?;
-    if [ $rc -ne 0 ]; then
-      info "Failed to dump the format file, quitting"
-      exit $rc;
-    fi
-    
-    rm "$(dirname "$ltx")/$(basename -s .ltx "$ltx").(log|pdf)";
-    
-  else
-    info "Using precompiled format $(basename "$fmt")"
-  fi
-    
-  popd > /dev/null
 fi
 
 # Trash outdated auxillary files to force TeX to regenerate them.
