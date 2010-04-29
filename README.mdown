@@ -1,0 +1,22 @@
+### What is it?
+
+This is yet another fork of *Alex Ross*' `LaTeX.tmbundle`. Alex did a great job simplifying typesetting process, however his work seems to be unfinished, moreover he has removed some original snippets that many of us were used to.
+
+Too install it, remove *Alex* bundle and disable build-in *LaTeX* bundle and execute following in the console:
+
+	$ cd ~/Library/Application Support/TextMate/Bundles
+	$ git clone git://github.com/nanoant/LaTeX.tmbundle.git
+
+### What are the key differences to original `LaTeX.tmbundle`
+
+It does work only with *Skim* and *Preview.app*, since `texMate.py` is no longer used, this bundle assumes that we use either one of those two PDF viewers. This simplification makes builds much much faster (thanks to *Alex Ross*).
+
+### What are the differences to Alex `LaTeX.tmbundle`
+
+* Brings back original menu layout and *LaTeX* name instead of *LaTeX 2*
+* Brings back old snippets, we don't need to remove them when adding new features, right?
+* Fixes little annoyances, like log window remaining even we have no errors nor warnings.
+
+### What can be done
+
+We shall simplify all other commands and remove totally `texMate.py` and `check_open` from the bundle. Anyway is there anybody who isn't using *Skim* for Mac *LeX* work?
