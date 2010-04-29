@@ -114,7 +114,7 @@ if $?.nil? or $?.exitstatus == 0
     }
   end
   # sleep(5)
-  TextMate::exit_discard if (ENV["TM_LATEX_WARN_LEVEL"].to_i || 0) &gt; highest_warning
+  TextMate::exit_discard if (ENV["TM_LATEX_WARN_LEVEL"].to_i || 0) &gt;= highest_warning
 else
   TextMate::exit_show_html
 end
