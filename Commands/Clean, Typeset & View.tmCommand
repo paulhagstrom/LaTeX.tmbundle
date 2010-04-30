@@ -10,7 +10,7 @@
 	<string>#!/usr/bin/env ruby
 # encoding: UTF-8
 
-require ENV["TM_BUNDLE_SUPPORT"] + "/lib/texstack"
+require ENV["TM_BUNDLE_SUPPORT"] + "/lib/texMate"
 require "pathname"
 
 TexMate.run(true) # true to clean first
