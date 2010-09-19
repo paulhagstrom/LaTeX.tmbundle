@@ -1116,7 +1116,7 @@ Put specific matches for particular LaTeX keyword.functions before the last two 
 			<string>(?x)
 					(
 						(\\)										# Marker
-						(?:foot)?(?:full)?(?:no)?(?:short)?		# Function Name
+						(?:foot)?(?:full)?(?:no)?(?:short)?(?:poss)?(?:pg)?		# Function Name
 						[cC]ite
 						(?:al)?(?:t|p|author|year(?:par)?|title)?[ANP]*
 						\*?											# Optional Unabreviated
