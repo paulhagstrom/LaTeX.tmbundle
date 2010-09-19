@@ -961,6 +961,51 @@
 		</dict>
 		<dict>
 			<key>begin</key>
+			<string>((\\)mot)(\{)</string>
+			<key>comment</key>
+			<string>Support for \mot as a quote form that italicizes, added by Paul Hagstrom</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.function.mot.latex</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.function.latex</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.mot.begin.latex</string>
+				</dict>
+			</dict>
+			<key>contentName</key>
+			<string>string.quoted.mot.latex</string>
+			<key>end</key>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.mot.end.latex</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>meta.function.mot.latex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>$base</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
 			<string>((\\)textit)(\{)</string>
 			<key>captures</key>
 			<dict>
