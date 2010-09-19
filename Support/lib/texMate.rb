@@ -27,7 +27,12 @@ class TexMate
         line = $1
         next
       # opening (may start anywhere)
-      elsif line =~ /\((\/[^\n\(\)]*?)(?:\s*\[\d+\])?((?: |\n|\(|$).*)/
+      # Edit (Paul Hagstrom)
+      # elsif line =~ /\((\/[^\n\(\)]*?)(?:\s*\[\d+\])?((?: |\n|\(|$).*)/
+      # Risky perhaps, but I've removed the possibility that the filename ends at a space,
+      # so that it will link to log files with a space in the name of a containing folder.
+      # Works ok in the simple case, I don't know whether it will fail in more complex cases.
+      elsif line =~ /\((\/[^\n\(\)]*?)(?:\s*\[\d+\])?((?:\n|\(|$).*)/
         @stack.push($1)
         line = $2
         next
