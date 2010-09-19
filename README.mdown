@@ -1,3 +1,13 @@
+### What is this fork?
+
+This is a fork of nanoant's update to the TextMate `LaTeX.tmbundle`.  It includes a couple of modifications that I to the syntax parser to handle:
+
+\posscitet, \pgcitet, etc. from the Semantics & Pragmatics stylesheet.
+\mot, an idiosyncratic version of \emph that I use as a form of quoted text that should be italic.
+
+The rest of the readme is nanoant's:
+
+
 ### What is it?
 
 This is yet another fork of *Alex Ross*' `LaTeX.tmbundle`. Alex did a great job simplifying typesetting process, however his work seems to be unfinished, moreover he has removed some original snippets that many of us were used to.
