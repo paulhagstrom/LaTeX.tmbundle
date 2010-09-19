@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>pdf=$(dirname ${TM_PROJECT_MASTER:-$TM_FILEPATH})/$(basename -s .tex ${TM_PROJECT_MASTER:-$TM_FILEPATH}).pdf
+	<string>pdf=$(dirname "${TM_PROJECT_MASTER:-$TM_FILEPATH}")/$(basename -s .tex "${TM_PROJECT_MASTER:-$TM_FILEPATH}").pdf
 
 /Applications/Skim.app/Contents/SharedSupport/displayline "$TM_LINE_NUMBER" "$pdf" "$TM_FILEPATH"</string>
 	<key>input</key>
