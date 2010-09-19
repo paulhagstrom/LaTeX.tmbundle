@@ -1,9 +1,12 @@
 ### What is this fork?
 
-This is a fork of nanoant's update to the TextMate `LaTeX.tmbundle`.  It includes a couple of modifications that I to the syntax parser to handle:
+This is a fork of nanoant's update to the TextMate `LaTeX.tmbundle`.  It includes a couple of small modifications to the syntax parser, and a couple of changes designed to handle the situation when a containing folder has a space in the name.
 
+The parser additions are:
 \posscitet, \pgcitet, etc. from the Semantics & Pragmatics stylesheet.
 \mot, an idiosyncratic version of \emph that I use as a form of quoted text that should be italic.
+
+The folders-with-spaces-related changes fix the command that jumps to the corresponding location in the PDF document, and the links generated in the status window when there is an error compiling.
 
 The rest of the readme is nanoant's:
 
