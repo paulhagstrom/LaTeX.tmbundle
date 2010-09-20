@@ -141,10 +141,16 @@ fi
 ranbibtex=0; rerun=1;
 
 
+if [ -n "$TM_LATEX_DEEP_CLEAN_FIRST" ];then
+  info 'Deep Cleaning';
+  seperator;
+  latexmk -CA;
+fi
+
 if [ -n "$TM_LATEX_CLEAN_FIRST" ];then
   info 'Cleaning';
   seperator;
-  latexmk -CA;
+  latexmk -c;
 fi
 
 # this is the main compile loop.

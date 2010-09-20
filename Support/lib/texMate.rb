@@ -17,22 +17,28 @@ class TexMate
   def update_current_file(line)
     # read greedily all matches
     while true
-      # empty
-      if line =~ /^\s*\(([^\n\(\)]*?)\)(.*)/
+      # empty (opens and closes on the same line)
+      # original:
+      # if line =~ /^\s*\(([^\n\(\)]*?)\)(.*)/
+      if line =~ /^[^\n\(\)]*\(([^\n\(\)]*?)\)(.*)/
+        # puts "**Short close: " + $1 + "<br />"
         line = $2
         next
       # closing
-      elsif line =~ /^\s*\)(.*)/
+      # original:
+      # elsif line =~ /^\s*\)(.*)/
+      elsif line =~ /^[^\n\(\)]*\)(.*)/
+        # puts "**Close (#{@stack.size}): " + @stack[-1] + "<br />"
         @stack.pop
         line = $1
         next
       # opening (may start anywhere)
-      # Edit (Paul Hagstrom)
+      # original:
       # elsif line =~ /\((\/[^\n\(\)]*?)(?:\s*\[\d+\])?((?: |\n|\(|$).*)/
-      # Risky perhaps, but I've removed the possibility that the filename ends at a space,
-      # so that it will link to log files with a space in the name of a containing folder.
-      # Works ok in the simple case, I don't know whether it will fail in more complex cases.
-      elsif line =~ /\((\/[^\n\(\)]*?)(?:\s*\[\d+\])?((?:\n|\(|$).*)/
+      # Changed in an attempt to allow for spaces in the names of containing folders.
+      # Also allow for files that start with ./ (got these in TexShop)
+      elsif line =~ /\((\.?\/[^\n\(\)]*?)(?:\s*\[\d+\])?((?:\n|\(|$).*)/
+        # puts "**Open (#{@stack.size}): " + $1 + "<br />"
         @stack.push($1)
         line = $2
         next
@@ -83,15 +89,17 @@ class TexMate
       nil # returning nil lets Executor print the line
     else
       ''  # returning an empty string "" causes Executor to do nothing.
+      
     end
   end
 
-  def run(clean=false)
+  def run(clean=false,deepclean=false)
 
     ENV["TM_LATEX_DEFAULT_FORMAT"] ||= ENV["TM_BUNDLE_SUPPORT"] + "/lib/tmdefault.ltx"
     ENV["TM_LATEX"] ||= (`grep -c fontspec #{ENV["TM_FILEPATH"]}`.to_i > 0 ? 'xelatex' : 'pdflatex')
     ENV["TM_LATEX_FLAGS"] ||= nil
     ENV["TM_LATEX_CLEAN_FIRST"] = 'true' if clean
+    ENV["TM_LATEX_DEEP_CLEAN_FIRST"] = 'true' if deepclean
 
     TextMate.save_current_document("tex")
 
@@ -144,8 +152,8 @@ class TexMate
     end
   end
 
-  def self.run(clean=false)
-    TexMate.new.run(clean)
+  def self.run(clean=false,deepclean=false)
+    TexMate.new.run(clean,deepclean)
   end
 
 end

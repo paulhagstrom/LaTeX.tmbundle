@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>bundleUUID</key>
+	<string>46788DCE-6227-11D9-BFB1-000D93589AF6</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+# encoding: UTF-8
+
+require ENV["TM_BUNDLE_SUPPORT"] + "/lib/texMate"
+require "pathname"
+
+TexMate.run(false,true) # true to clean first
+</string>
+	<key>dontFollowNewOutput</key>
+	<false/>
+	<key>input</key>
+	<string>document</string>
+	<key>keyEquivalent</key>
+	<string>~@R</string>
+	<key>name</key>
+	<string>Deep Clean, Typeset &amp; View</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>scope</key>
+	<string>text.tex,text.bibtex</string>
+	<key>uuid</key>
+	<string>7448ACC9-7C5D-402F-9851-1B63744645C9</string>
+</dict>
+</plist>
