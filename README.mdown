@@ -1,12 +1,14 @@
 ### What is this fork?
 
-This is a fork of nanoant's update to the TextMate `LaTeX.tmbundle`.  It includes a couple of small modifications to the syntax parser, and a couple of changes designed to handle the situation when a containing folder has a space in the name.
+This is a fork of nanoant's update to the TextMate `LaTeX.tmbundle` (and I am Paul Hagstrom).  It includes a couple of small modifications to the syntax parser, and a couple of changes designed to handle the situation when a containing folder has a space in the name.
 
 The parser additions are:
 \posscitet, \pgcitet, etc. from the Semantics & Pragmatics stylesheet.
 \mot, an idiosyncratic version of \emph that I use as a form of quoted text that should be italic.
 
-The folders-with-spaces-related changes fix the command that jumps to the corresponding location in the PDF document, and the links generated in the status window when there is an error compiling.
+The folders-with-spaces-related changes fix the command that jumps to the corresponding location in the PDF document, and the links generated in the status window when there is an error compiling.  As a result of making this work, I seem also to have fixed a more general problem with the log file parser, at least it works better for me now.
+
+Also, because I sometimes have more than one .tex file in a directory, generating independent .pdf files, I changed "Clean and Typeset" to be less aggressive about what it removes (uses latexmk's "-c" option instead of "-CA") and added "Deep Clean and Typeset" to get the original (pdf-removing) behavior back.  I think latexmk tries not to remove unrelated pdfs, but I was still finding some of my TeX-generated but unrelated pdfs being removed with "-CA".
 
 The rest of the readme is nanoant's:
 
