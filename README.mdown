@@ -10,17 +10,17 @@ The folders-with-spaces-related changes fix the command that jumps to the corres
 
 Also, because I sometimes have more than one .tex file in a directory, generating independent .pdf files, I changed "Clean and Typeset" to be less aggressive about what it removes (uses latexmk's "-c" option instead of "-CA") and added "Deep Clean and Typeset" to get the original (pdf-removing) behavior back.  I think latexmk tries not to remove unrelated pdfs, but I was still finding some of my TeX-generated but unrelated pdfs being removed with "-CA".
 
-The rest of the readme is nanoant's:
+The rest of the readme is mostly nanoant's, except I have updated the installation URL to reflect this fork, and I fixed a couple of typos:
 
 
-### What is it?
+### What is it? (nanoant's)
 
 This is yet another fork of *Alex Ross*' `LaTeX.tmbundle`. Alex did a great job simplifying typesetting process, however his work seems to be unfinished, moreover he has removed some original snippets that many of us were used to.
 
-Too install it, remove *Alex* bundle and disable build-in *LaTeX* bundle and execute following in the console:
+Too install it, remove *Alex*'s bundle and disable the built-in *LaTeX* bundle and execute following in the console:
 
 	$ cd ~/Library/Application Support/TextMate/Bundles
-	$ git clone git://github.com/nanoant/LaTeX.tmbundle.git
+	$ git clone git://github.com/paulhagstrom/LaTeX.tmbundle.git
 
 ### What are the key differences to original `LaTeX.tmbundle`
 
@@ -34,4 +34,4 @@ It does work only with *Skim* and *Preview.app*, since `texMate.py` is no longer
 
 ### What can be done
 
-We shall simplify all other commands and remove totally `texMate.py` and `check_open` from the bundle. Anyway is there anybody who isn't using *Skim* for Mac *LeX* work?
+We shall simplify all other commands and remove totally `texMate.py` and `check_open` from the bundle. Anyway is there anybody who isn't using *Skim* for Mac *LaTeX* work?
