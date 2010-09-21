@@ -39,7 +39,7 @@ class TexMate
       # Also allow for files that start with ./ (got these in TexShop)
       elsif line =~ /\((\.?\/[^\n\(\)]*?)(?:\s*\[\d+\])?((?:\n|\(|$).*)/
         # puts "**Open (#{@stack.size}): " + $1 + "<br />"
-        @stack.push($1)
+        @stack.push($1.strip)
         line = $2
         next
       end
