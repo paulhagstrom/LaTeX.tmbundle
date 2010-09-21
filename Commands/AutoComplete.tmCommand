@@ -18,13 +18,15 @@ TextMate::UI.complete(choices_for_selected_text, :initial_filter =&gt; '\\', :ke
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
-	<string>\</string>
+	<string>^\</string>
 	<key>name</key>
 	<string>Autocomplete</string>
 	<key>output</key>
 	<string>showAsTooltip</string>
 	<key>scope</key>
 	<string>text.tex.latex - constant.character.escape</string>
+	<key>tabTrigger</key>
+	<string>\</string>
 	<key>uuid</key>
 	<string>804463D8-C615-4AF4-87CA-07171E21C70D</string>
 </dict>
